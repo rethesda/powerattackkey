@@ -232,9 +232,11 @@ void InputEventHandler::PerformAction(RE::BGSAction* action, RE::Actor* player) 
 
 bool InputEventHandler::PerformRightHandPA(RE::PlayerCharacter* player) {
     bool isRightHandUnarmed = IsHandUnarmed(player, false);
+    bool bInJumpState = false;
+    player->GetGraphVariableBool("bInJumpState", bInJumpState);
 
     if (HasEnoughStamina(player, true, false)) {
-        if (isRightHandUnarmed && !Settings::usingMCO) PerformAction(LARightHandAction, player);
+        if (((isRightHandUnarmed || bInJumpState) && !Settings::usingMCO)) PerformAction(LARightHandAction, player);
         PerformAction(PARightHandAction, player);
         return true;
     }
@@ -259,7 +261,10 @@ bool InputEventHandler::PerformLeftHandPA(RE::PlayerCharacter* player) {
 }
 
 bool InputEventHandler::PerformBothHandsPA(RE::PlayerCharacter* player) {
+    bool bInJumpState = false;
+    player->GetGraphVariableBool("bInJumpState", bInJumpState);
     if (HasEnoughStamina(player, true, true)) {
+        if (bInJumpState) PerformAction(LABothHandsAction, player);
         PerformAction(PABothHandsAction, player);
         return true;
     }
